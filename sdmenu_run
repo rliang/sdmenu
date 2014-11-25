@@ -1,0 +1,11 @@
+#!/bin/sh
+
+cache="$HOME/.cache/$0"
+paths=$(echo $PATH | tr ':' ' ')
+for i in $paths
+do
+  [ $cache -nt $i ] && continue
+  find $paths -maxdepth 1 -type f -executable > $cache
+  break
+done
+exec $(sdmenu $(< $cache))
