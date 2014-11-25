@@ -36,8 +36,6 @@
 #define GO_LEFT "\x08"
 #define CLEAR_SCREEN "\x1b[J"
 
-#define PREF(T, A, B, F) if ((T = getenv("SDMENU_" #A)) != NULL) PREFS.B = F(T)
-
 struct {
 	size_t lines;
 	size_t width;
@@ -159,11 +157,12 @@ void screen_init(void)
 void prefs_init(void)
 {
 	char *v;
-	PREF(v, LINES, lines, atoi);
-	/* fprintf(stderr, "Lines: %d\n", PREFS.lines); */
-	PREF(v, WIDTH, width, atoi);
-	/* fprintf(stderr, "Width: %d\n", PREFS.width); */
-	PREF(v, SELECTED, selected, (char *));
+	if ((v = getenv("SDMENU_LINES")) != NULL)
+		PREFS.lines = atoi(v);
+	if ((v = getenv("SDMENU_WIDTH")) != NULL)
+		PREFS.width = atoi(v);
+	if ((v = getenv("SDMENU_SELECTED")) != NULL)
+		PREFS.selected = v;
 }
 
 void output(void)
