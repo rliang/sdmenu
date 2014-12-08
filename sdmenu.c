@@ -167,7 +167,6 @@ void prefs_init(void)
 
 void output(void)
 {
-	fputs("\n", stderr);
 	puts(ENTRIES.current < ENTRIES.matches ?
 			ENTRIES.data[ENTRIES.current].str : INPUT.str);
 }
