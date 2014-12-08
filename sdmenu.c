@@ -31,7 +31,7 @@
 #include <unistd.h>
 
 #define TEXT_NORMAL "\x1b(B\x1b[m"
-#define TEXT_BOLD "\x1b[1m"
+#define TEXT_REVERSE "\x1b[7m"
 #define GO_UP "\x1b[A"
 #define GO_LEFT "\x08"
 #define CLEAR_SCREEN "\x1b[J"
@@ -40,7 +40,7 @@ struct {
 	size_t lines;
 	size_t width;
 	const char *selected;
-} PREFS = { 2, 82, TEXT_BOLD };
+} PREFS = { 2, 82, TEXT_REVERSE };
 
 struct {
 	struct entry {
@@ -199,6 +199,7 @@ void init(struct entry *buf, int argc, char *argv[])
 	entries_init(buf, argc, argv);
 	prefs_init();
 	screen_init();
+	atexit(screen_clear);
 }
 
 void main(int argc, char *argv[])
