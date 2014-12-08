@@ -165,12 +165,6 @@ void prefs_init(void)
 		PREFS.selected = v;
 }
 
-void output(void)
-{
-	puts(ENTRIES.current < ENTRIES.matches ?
-			ENTRIES.data[ENTRIES.current].str : INPUT.str);
-}
-
 void interpret(void)
 {
 	char c = getchar();
@@ -184,7 +178,8 @@ void interpret(void)
 		ENTRIES.current = 0;
 		break;
 	case '\n':
-		output();
+		puts(ENTRIES.current < ENTRIES.matches ?
+				ENTRIES.data[ENTRIES.current].str : INPUT.str);
 	case '\x1b':
 		exit(EXIT_SUCCESS);
 	default:
