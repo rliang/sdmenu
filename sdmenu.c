@@ -65,8 +65,15 @@ struct {
 
 int entry_compare(const struct entry *e1, const struct entry *e2)
 {
-	return e1->pos < e2->pos ? -1 : e1->pos > e2->pos ? 1 :
-		e1->len < e2->len ? -1 : e1->len > e2->len ? 1 : 0;
+	if (e1->pos < e2->pos)
+		return -1;
+	if (e1->pos > e2->pos)
+		return 1;
+	if (e1->len < e2->len)
+		return -1;
+	if (e1->len > e2->len)
+		return 1;
+	return 0;
 }
 
 void entry_swap(struct entry *e1, struct entry *e2)
@@ -94,16 +101,16 @@ void entries_filter(void)
 			(int (*)(const void *, const void *)) entry_compare);
 }
 
-void entry_snprint(char **str, size_t size, size_t i)
+int entry_snprint(char *str, size_t size, size_t i)
 {
 	if (size > PREFS.width)
 		size = PREFS.width;
-	size_t all = i != ENTRIES.current ?
-		snprintf(*str, size, "%s ",
+	int all = i != ENTRIES.current ?
+		snprintf(str, size, "%s ",
 				ENTRIES.data[i].str) :
-		snprintf(*str, size, "%s%s" TEXT_NORMAL " ",
+		snprintf(str, size, "%s%s" TEXT_NORMAL " ",
 				PREFS.selected, ENTRIES.data[i].str);
-	*str += all < size ? all : size;
+	return all < size ? all : size;
 }
 
 void entries_init(struct entry *buf, int argc, char *argv[])
@@ -112,8 +119,7 @@ void entries_init(struct entry *buf, int argc, char *argv[])
 	ENTRIES.matches = ENTRIES.len = argc;
 	size_t i = 0;
 	for (i = 0; i < ENTRIES.len; ++i)
-		ENTRIES.data[i] = (struct entry)
-		{ argv[i], strlen(argv[i]), -1 };
+		ENTRIES.data[i] = (struct entry) { argv[i], strlen(argv[i]), -1 };
 }
 
 void screen_clear(void)
@@ -128,12 +134,14 @@ void screen_clear(void)
 
 void screen_refresh(void)
 {
-	char str[SCREEN.cols * PREFS.lines], *end = str + sizeof(str), *k = str;
+	char str[SCREEN.cols * PREFS.lines],
+	     *end = str + sizeof(str),
+	     *k = str;
 	str[0] = '\0';
 	int i;
 	for (i = 0; i < ENTRIES.matches && k < end; i++)
-		entry_snprint(&k, end - k, i);
-	fprintf(stderr, "%s\n%s" TEXT_NORMAL, INPUT.str, str);
+		k += entry_snprint(k, end - k, i);
+	fprintf(stderr, "%s\n%s%s", INPUT.str, str, TEXT_NORMAL);
 	SCREEN.used_rows = (k - str) / (SCREEN.cols + 1);
 }
 
