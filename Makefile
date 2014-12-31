@@ -1,5 +1,5 @@
 TARGET  := sdmenu
-SCRIPTS := sdmenu_run
+SCRIPTS := sdmenu_run sdmenu_nav
 CFLAGS  ?= -Os -pipe -march=native
 LDFLAGS ?= -s
 PREFIX  ?= /usr/local
