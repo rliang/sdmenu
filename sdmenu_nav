@@ -1,0 +1,11 @@
+#!/bin/sh
+
+doit(){
+  local X="$(find . -mindepth 1 -maxdepth 1 -exec sdmenu .. {} +)"
+  [ -z "$X" ] && echo "cd '$PWD'" && return
+  [ ! -d "$X" ] && echo "xdg-open '$PWD/$X'" && return
+  cd "$X"
+  doit
+}
+
+eval "$(doit)"
